@@ -1,15 +1,32 @@
-# Project_Group5
-Option Trading Applicatio: 
+# Project_Group5: Ketomus Option Trading Application
+Our project seeks to develop an option trading application that provides pricing and analytics for trading stock options.  
 
-## Scope: 
+## Scope
+We have selected an initial group of 16 liquid stocks to analyze for 1 & 2 month call and put options.  
+The application retrieves current stock and option pricing quotes and applies Black-Scholes model to derive option analytics.  
+The output displays an 'option chain' with analytics visualizations in a panel dashboard with user selection of stock and option term by dropdown.  
 
+## Finding relevant data 
+The application requires current and historical data for stocks, options and interest rates.  
+After evaluating APIs incl. Alpaca, Quandl, and Alphavantage we found that IEX Cloud API offers a one stop solution for all relevant market data.  
+Free IEX subscription plan restricts data type and volume available via API, hence we subscribed for a paid service for expanded access.  
+Our paid subscription is still subject to monthly API caps of 5 million 'data credits.'   
+To manage our API request volume we used csv files for ‘data warehousing.'  
 
-## Type of Data,  Data Source, Clean up 
+## Using IEX data
+We retrieved the following data:
+- COB option prices
+- COB stock quotes
+- 1yr historical stock data to compute historical volatility
+- COB Treasury yield curve
 
-
-
-## Option Analytics - Calculation of IMplied Vol & Greeks 
-
+The IEX API requests return JSON format dictionaries which where necessary we converted into datatypes suitable for further analysis.  
+Retrieving current option prices requires 2 API requests for each ticker: a first to obtain option maturities and a second to obtain the option quote across strike prices for each maturity.  
+Issues with the raw API data: number of data fields (34), call and put records mixed together, unordered strike prices.  
+To facilitate analysis we created 1 aggregate dataframe across tickers, option types, and maturities.  
+To create the ‘option chain’ for each ticker we separated call and put records, re-ordered by strike price, then data sliced by data field and number of strike prices.   
+Lastly we appended option analytics to option chain.  
+Final option chain data fields (per ticker/expiry date): ‘side’, ‘bid’, ‘ask’, ‘strike price’, ‘volume’, ‘open interest’, 'Implied Volatilty', 'delta', 'vega'  
 
 ## Coding: Option Analytics, Black-Scholes Model & Dashboard
 
@@ -51,8 +68,6 @@ o  We created two different visualizations:
     	An option chain table with two tabs each representing the different maturities in our scope and a drop down for the user to select a ticker from the watchlist.
 
     	The option chain table showed the user all the different fields we extracted from IEX cloud and was separated by the type of option available (Call options on the              right and Put options on the left)
-
-    	The Smiles were linked to the maturities tab selected in the option chain and had a separate drop down for the user to select a ticker. We plotted the Smiles                     separately for Calls and Puts but in the future we would like to combine the two together as they should be.
 
 
 ## Implications & Future Steps
